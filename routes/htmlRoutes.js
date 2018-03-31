@@ -16,20 +16,22 @@ module.exports = function (app) {
       });
 
     app.get("/scrape", function(req, res) {
-        // Make a request for the news section of `ycombinator`
+    
         request("https://www.pcgamer.com/news/", function(error, response, html) {
-          // Load the html body from request into cheerio
+         
           const $ = cheerio.load(html);
-          // For each element with a "title" class
-          $("h3.article-name").each(function(i, element) {
-      
-              const title = $(element).text();
-              const summary = $(element).text();
-              console.log(title)
-            // Save the text and href of each link enclosed in the current element
-            // var title = $(element).children("a").text();
-            // var link = $(element).children("a").attr("href");
-      
+          let results = [];
+          $(".listingResult").each(function(i, element) {
+            if(i>0){
+              const title = $(element).find(".article-name").text();
+              const author = $(element).find(".byline span").last().text();
+              const time = $(element).find(".published-date").attr("datetime");
+              const summary = $(element).find(".synopsis").clone().children().remove().end().text();
+              const link =  $(element).children("a").attr("href");
+              const photoURL = $(element).find("img").data("src");
+              results.push({title, author, time, summary, link, photoURL})
+            }
+            console.log(results)
             // If this found element had both a title and a link
             // if (title && link) {
             //   // Insert the data in the scrapedData db
