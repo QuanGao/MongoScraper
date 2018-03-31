@@ -54,6 +54,6 @@ module.exports = function (app) {
         });
       
         // Send a "Scrape Complete" message to the browser
-        res.send("Scrape Complete");
+        res.render("index", {msg:"Scrape Complete"});
       });
 }
