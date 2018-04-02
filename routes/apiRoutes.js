@@ -7,22 +7,17 @@
 // });
 // var mongojs = require("mongojs");
 
-var request = require("request");
-var cheerio = require("cheerio");
+const request = require("request");
+const cheerio = require("cheerio");
 
+const db = require("../models");
 module.exports = function (app) {
 
-    app.get("/all", function(req, res) {
-        // Find all results from the scrapedData collection in the db
-        db.scrapedData.find({}, function(error, found) {
-          // Throw any errors to the console
-          if (error) {
-            console.log(error);
-          }
-          // If there are no errors, send the data to the browser as json
-          else {
-            res.json(found);
-          }
+    app.get("/saved", function(req, res) {
+        db.News.find({saved:true}, function(err, found) {
+          if(err) throw err;
+          res.json(found);
+    
         });
       });
 
