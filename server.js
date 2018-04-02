@@ -11,9 +11,7 @@ app.set("view engine", "handlebars");
 // const path = require("path");
 
 mongoose.Promise = Promise;
-mongoose.connect(MONGODB_URI, {
-  useMongoClient: true
-});
+mongoose.connect(MONGODB_URI);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

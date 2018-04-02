@@ -6,13 +6,20 @@
 // });
 // var mongojs = require("mongojs");
 
-var request = require("request");
-var cheerio = require("cheerio");
+const request = require("request");
+const cheerio = require("cheerio");
+
+const db = require("../models");
 
 module.exports = function (app) {
 
     app.get("/", function(req, res) {
-        res.render("index");
+        db.News.find({saved: false}, function(err, data){
+          if(err) throw err
+          console.log("this is data:   "+data)
+          res.render("index", {news:data});
+        })
+       
       });
 
     app.get("/scrape", function(req, res) {
@@ -20,36 +27,34 @@ module.exports = function (app) {
         request("https://www.pcgamer.com/news/", function(error, response, html) {
          
           const $ = cheerio.load(html);
-          let results = [];
+          // let results = [];
           $(".listingResult").each(function(i, element) {
-            if(i>0){
+            if(i>0 && i<10){
               const title = $(element).find(".article-name").text();
               const author = $(element).find(".byline span").last().text();
               const time = $(element).find(".published-date").attr("datetime");
               const summary = $(element).find(".synopsis").clone().children().remove().end().text();
               const link =  $(element).children("a").attr("href");
               const photoURL = $(element).find("img").data("src");
-              results.push({title, author, time, summary, link, photoURL})
+              // results.push({title, author, time, summary, link, photoURL})
+              // const news_item = new db.News ({title, author, time, summary, link, photoURL});
+
+              const query = {title, author, time, summary, link, photoURL},
+                    update = {},
+                    options = {upsert: true, new: true, setDefaultsOnInsert:true};
+
+              db.News.findOneAndUpdate(query, update, options, function(err, result){
+                  if(err) throw err;
+                  // console.log(result)
+              })
+
+            //   news_item.save(function(err){
+            //     if(err) throw err;
+            //     console.log("saved")
+            //   })
+            //   console.log(news_item)
             }
-            console.log(results)
-            // If this found element had both a title and a link
-            // if (title && link) {
-            //   // Insert the data in the scrapedData db
-            //   db.scrapedData.insert({
-            //     title: title,
-            //     link: link
-            //   },
-            //   function(err, inserted) {
-            //     if (err) {
-            //       // Log the error if one is encountered during the query
-            //       console.log(err);
-            //     }
-            //     else {
-            //       // Otherwise, log the inserted data
-            //       console.log(inserted);
-            //     }
-            //   });
-            // }
+
           });
         });
       
