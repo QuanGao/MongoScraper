@@ -1,23 +1,21 @@
 {{#each news}}
 <div class="class row">
-    <div class="class col-md-3"></div>
-    <div class="card mb-3 col-md-6">
+    <div class="class col-md-3 col-sm-2"></div>
+    <div class="card mb-3 col-md-6 col-sm-8 col-xs-12">
         <a href={{link}}><h3 class="card-header">{{title}}</h3></a>
-        <div class="card-body">
-            <p>
-                <span class="card-title">{{author}}</span>  <span style="color:brown">|</span>  
-                <span class="card-subtitle text-muted">{{time}}</pan>
-            </p>
+        <div class="card-body row">
+            <div class="col-md-6">
+                <img style="height:150px; width:200px; display: block; margin:auto" src={{photoURL}} alt="Card image">
+            </div>
+            <div class="col-md-6">
+                <p>
+                    <span class="card-title">{{author}}</span>  <span style="color:brown">|</span>  
+                    <span class="card-subtitle text-muted">{{time}}</pan>
+                </p>
+                <p class="card-text">{{summary}}</p>      
+            </div>
         </div>
-        <img style="height:150px; width:200px; display: block; margin:auto" src={{photoURL}} alt="Card image">
-            
-        <div class="card-body">
-            <p class="card-text">{{summary}}</p>
-        </div>        
-        {{!-- <div class="card-body">
-            <a href="#" class="card-link">Leave a note</a>
-        </div> --}}
-    </div>
-    <div class="class col-md-3"></div>
+    </div>       
+    <div class="class col-md-3 col-sm-2"></div>
 </div>
 {{/each}}
