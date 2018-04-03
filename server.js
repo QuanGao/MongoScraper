@@ -8,7 +8,7 @@ const bodyParser = require("body-parser");
 
 app.engine("handlebars", exphbs({defaultLayout: "main"}));
 app.set("view engine", "handlebars");
-// const path = require("path");
+app.use(express.static("public"));
 
 mongoose.Promise = Promise;
 mongoose.connect(MONGODB_URI);
