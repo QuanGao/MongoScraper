@@ -1,4 +1,4 @@
-{{#each news}}
+{{#each savedNews}}
 <div class="class row">
     <div class="class col-md-3 col-sm-2"></div>
     <div class="card mb-3 col-md-6 col-sm-8 col-xs-12">
@@ -13,7 +13,8 @@
                     <span class="card-subtitle text-muted">{{time}}</pan>
                 </p>
                 <p class="card-text">{{summary}}</p>  
-                <button class="comment">Add comments</button>     
+                <button class="comment btn btn-sm btn-info" data-id={{_id}}>Add comments</button>  
+                 <button class="unsave btn btn-sm btn-primary disabled" data-id={{_id}}>unsave</button>      
             </div>
         </div>
     </div>       

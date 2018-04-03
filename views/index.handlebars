@@ -1,5 +1,5 @@
 <h2>{{numOfnewItems}}</h2>
-{{#each news}}
+{{#each unsavedNews}}
 <div class="class row">
     <div class="class col-md-3 col-sm-2"></div>
     <div class="card mb-3 col-md-6 col-sm-8 col-xs-12">
@@ -14,7 +14,8 @@
                     <span class="card-subtitle text-muted">{{time}}</pan>
                 </p>
                 <p class="card-text">{{summary}}</p>
-                <button class="card-text">Save</button>    
+                <button class="btn btn-success btn-sm save" data-id={{_id}}>Save</button>    
+                <h1>{{_id}}</h1>
             </div>
         </div>
     </div>       

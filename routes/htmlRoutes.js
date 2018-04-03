@@ -22,22 +22,18 @@ module.exports = function (app) {
             }
           });
 
-          db.News.find({}, "-_id", function(err, existingNews){
+          db.News.find({}, "-_id title", function(err, existingNews){
             if (err) throw err;
 
             const existingSet= new Set (existingNews.map(a=>a.title));
-            console.log("existingNews" +existingNews)
             const newResults = results.filter(b=>{return !existingSet.has(b.title)});
-            console.log("newResults" + newResults)
-
             const numOfnewItems = newResults.length;
-            console.log("numOfnewItems "+ numOfnewItems )
-
-            const unsavedNews = existingNews.filter(a=>!a.saved).concat(newResults)
 
             db.News.create(newResults, function(err, data){
-              if (err) throw err;             
-              res.render("index", {news:unsavedNews, numOfnewItems:numOfnewItems});
+              if (err) throw err; 
+              db.News.find({saved:false}, function(err, unsavedNews){            
+                res.render("index", {unsavedNews, numOfnewItems})
+              });
   
             })
 
