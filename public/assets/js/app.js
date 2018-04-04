@@ -24,8 +24,19 @@ $(document).ready(function () {
 
     $(".scrape").on("click", function(){
         $.get("/scrape", function(data, status){
-            console.log(data, status)
-            location.reload();
+            console.log(data, status)   
+            // location.reload();  
+            if(data.numOfnewItems>0){
+                $(".report").text(`${data.numOfnewItems} more articles added`)
+            } else {
+            $(".report").text("No new articles. Check back later!")
+            }
+
+            $(".articleCounter").modal("show")
+            $('.articleCounter').on('hidden.bs.modal', function () {
+                location.reload();
+               })
+            
         })
     })
 })

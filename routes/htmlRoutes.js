@@ -28,12 +28,14 @@ module.exports = function (app) {
             const existingSet= new Set (existingNews.map(a=>a.title));
             const newResults = results.filter(b=>{return !existingSet.has(b.title)});
             const numOfnewItems = newResults.length;
-
+            const newItemAdded = numOfnewItems>0;
+            console.log("newItemAdded" + newItemAdded)
             db.News.create(newResults, function(err, data){
               if (err) throw err; 
-              db.News.find({saved:false}, function(err, unsavedNews){            
-                res.render("index", {unsavedNews, numOfnewItems})
-              });
+              res.json({numOfnewItems, newItemAdded})
+              // db.News.find({saved:false}, function(err, unsavedNews){            
+              //   res.render("index", {unsavedNews, numOfnewItems, newItemAdded})
+              // });
   
             })
 
