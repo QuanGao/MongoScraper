@@ -11,7 +11,7 @@ module.exports = function (app) {
           const $ = cheerio.load(html);
           let results = [];
           $(".listingResult").each(function(i, element) {
-            if(i>0 && i<100){
+            if(i>0 && i<10){
               const title = $(element).find(".article-name").text().trim();
               const author = $(element).find(".byline span").last().text().trim();
               const time = $(element).find(".published-date").attr("datetime");
@@ -28,15 +28,10 @@ module.exports = function (app) {
             const existingSet= new Set (existingNews.map(a=>a.title));
             const newResults = results.filter(b=>{return !existingSet.has(b.title)});
             const numOfnewItems = newResults.length;
-            const newItemAdded = numOfnewItems>0;
-            console.log("newItemAdded" + newItemAdded)
+
             db.News.create(newResults, function(err, data){
               if (err) throw err; 
-              res.json({numOfnewItems, newItemAdded})
-              // db.News.find({saved:false}, function(err, unsavedNews){            
-              //   res.render("index", {unsavedNews, numOfnewItems, newItemAdded})
-              // });
-  
+              res.json({numOfnewItems})  
             })
 
           })
