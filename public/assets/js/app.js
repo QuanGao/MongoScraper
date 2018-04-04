@@ -20,5 +20,12 @@ $(document).ready(function () {
             location.reload();
             
         })
+    });
+
+    $(".scrape").on("click", function(){
+        $.get("/scrape", function(data, status){
+            console.log(data, status)
+            location.reload();
+        })
     })
 })
