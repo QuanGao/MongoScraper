@@ -11,7 +11,7 @@ module.exports = function (app) {
           const $ = cheerio.load(html);
           let results = [];
           $(".listingResult").each(function(i, element) {
-            if(i>0 && i<10){
+            if(i>0 && i<15){
               const title = $(element).find(".article-name").text().trim();
               const author = $(element).find(".byline span").last().text().trim();
               const time = $(element).find(".published-date").attr("datetime");

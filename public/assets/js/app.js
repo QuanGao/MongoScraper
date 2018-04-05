@@ -28,15 +28,30 @@ $(document).ready(function () {
             // location.reload();  
             if(data.numOfnewItems>0){
                 $(".report").text(`${data.numOfnewItems} more articles added`)
-            } else {
-            $(".report").text("No new articles. Check back later!")
-            }
-
-            $(".articleCounter").modal("show")
+            } 
+            $(".articleCounter").modal("show");
             $('.articleCounter').on('hidden.bs.modal', function () {
                 location.reload();
                })
             
         })
+    });
+
+    $(".addComment").on("click", function(){
+        console.log("comment clicked")
+
+        $("#commentModal").on("show.bs.modal", function (event) {
+        
+            const commentButton = $(event.relatedTarget) // Button that triggered the modal
+            console.log(commentButton)
+            const articleId = commentButton.data("id") // Extract info from data-* attributes
+            console.log(articleId)
+            $(this).find(".modal-title").text(`Comments for article: ${articleId}`);
+            const commentContent = $(this).find(".commentText").val().trim();
+            console.log(commentContent)
+    
+          })
+
     })
+
 })

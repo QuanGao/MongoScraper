@@ -1,5 +1,3 @@
-// var databaseUrl = "scraper";
-// var collections = ["scrapedData"];
 const request = require("request");
 const cheerio = require("cheerio");
 const db = require("../models");
