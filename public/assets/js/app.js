@@ -46,6 +46,9 @@ $(document).ready(function () {
             const id = commentButton.data("id")
             $(this).find(".modal-title").text(`Comments for article: ${id}`);
 
+            $(this).find(".saveComment").data("id",id)
+            console.log("save comment ID: " + id)
+
             $.get(`/getComments/${id}`, (data, status)=>{
                 $(".comment-container").empty();
                 console.log("data send back from getcomments byID   " + data)
@@ -53,30 +56,26 @@ $(document).ready(function () {
                 console.log(comments);
                 comments.forEach(function(comment){
                     const commentContent = $("<li class='list-group-item'>").text(comment.content);
-                    const deleteBtn = $("<button class='btn btn-primary disabled comment-delete'>").text("X")
+                    const deleteBtn = $(`<button class="btn btn-primary disabled comment-delete" data-noteId=${comment._id}>`).text("X")
                     commentContent.append(deleteBtn)
                     $(".comment-container").append(commentContent)
                 })
-
-
-            })
-
-            $(".saveComment").on("click", function(event){
-                // event.preventDefault()
-                const content = $(".commentText").val().trim();
-                console.log("content   " + content)
-                $.post(`/saveComments/${id}`,{content}, function(data, status){
-                    console.log("data after save comemnt  " + data);
-                    console.log("data.notes after save comemnt  " + data.notes);
-                    console.log("data.title after save comemnt  " + data.title);
-
-                    $(".commentText").val("");
-    
-                })
-
-            })    
+            })  
         })        
-
     })
+
+    $(".saveComment").on("click", function(event){
+        event.preventDefault()
+        const content = $(".commentText").val().trim();
+        const id = $(this).data("id")
+        console.log("content   " + content)
+        $.post(`/saveComments/${id}`,{content}, function(data, status){
+            console.log("data after save comemnt  " + data);
+            console.log("data.notes after save comemnt  " + data.notes);
+            console.log("data.title after save comemnt  " + data.title);
+            $(".commentText").val("");
+
+        })
+    })  
 
 })
