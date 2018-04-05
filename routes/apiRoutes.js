@@ -70,7 +70,14 @@ app.get("/getComments/:id", function(req, res){
 
 })
 
-// app.get("/deleteComments/:id",(req, res)=>{
+app.delete("/deleteComments/:id",(req, res)=>{
 
-// })
+  db.Note.findOneAndRemove({_id: req.params.id}).then(dbNote=>{
+    return db.News.findOneAndUpdate({ notes: req.params.id }, {$pull: {notes: dbNote._id}}, {new:true});
+  }).then(dbAriticle=>{
+    res.json(dbArticle)
+  }).catch(err=>res.json(err))
+    
+})
+
 }

@@ -56,7 +56,7 @@ $(document).ready(function () {
                 console.log(comments);
                 comments.forEach(function(comment){
                     const commentContent = $("<li class='list-group-item'>").text(comment.content);
-                    const deleteBtn = $(`<button class="btn btn-primary disabled comment-delete" data-noteId=${comment._id}>`).text("X")
+                    const deleteBtn = $(`<button class="btn btn-primary disabled comment-delete" data-noteid=${comment._id}>`).text("X")
                     commentContent.append(deleteBtn)
                     $(".comment-container").append(commentContent)
                 })
@@ -77,5 +77,21 @@ $(document).ready(function () {
 
         })
     })  
+
+    $(".comment-container").on("click", ".comment-delete",function(event){
+        console.log("delete clicked")
+        const id = $(this).data("noteid")
+        console.log("noteID:  "+ id)
+        $.ajax({
+            url: `/deleteComments/${id}`,
+            type: 'DELETE',
+            success: function(result) {
+                console.log(result);
+                location.reload();
+            }
+        });
+
+
+    })
 
 })
