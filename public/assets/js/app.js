@@ -42,15 +42,40 @@ $(document).ready(function () {
 
         $("#commentModal").on("show.bs.modal", function (event) {
         
-            const commentButton = $(event.relatedTarget) // Button that triggered the modal
-            console.log(commentButton)
-            const articleId = commentButton.data("id") // Extract info from data-* attributes
-            console.log(articleId)
-            $(this).find(".modal-title").text(`Comments for article: ${articleId}`);
-            const commentContent = $(this).find(".commentText").val().trim();
-            console.log(commentContent)
+            const commentButton = $(event.relatedTarget) 
+            const id = commentButton.data("id")
+            $(this).find(".modal-title").text(`Comments for article: ${id}`);
+
+            $.get(`/getComments/${id}`, (data, status)=>{
+                $(".comment-container").empty();
+                console.log("data send back from getcomments byID   " + data)
+                const comments = data.notes;
+                console.log(comments);
+                comments.forEach(function(comment){
+                    const commentContent = $("<li class='list-group-item'>").text(comment.content);
+                    const deleteBtn = $("<button class='btn btn-primary disabled comment-delete'>").text("X")
+                    commentContent.append(deleteBtn)
+                    $(".comment-container").append(commentContent)
+                })
+
+
+            })
+
+            $(".saveComment").on("click", function(event){
+                // event.preventDefault()
+                const content = $(".commentText").val().trim();
+                console.log("content   " + content)
+                $.post(`/saveComments/${id}`,{content}, function(data, status){
+                    console.log("data after save comemnt  " + data);
+                    console.log("data.notes after save comemnt  " + data.notes);
+                    console.log("data.title after save comemnt  " + data.title);
+
+                    $(".commentText").val("");
     
-          })
+                })
+
+            })    
+        })        
 
     })
 

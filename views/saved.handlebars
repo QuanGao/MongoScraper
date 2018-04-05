@@ -28,7 +28,7 @@
                     <span class="card-subtitle text-muted">{{time}}</pan>
                 </p>
                 <p class="card-text">{{summary}}</p>  
-                <button type="button" class="addComment btn btn-sm btn-info" data-toggle="modal" data-target="#commentModal" data-id={{_id}}>Add comments</button>  
+                <button type="button" class="addComment btn btn-sm btn-info" data-toggle="modal" data-target="#commentModal" data-id={{_id}}>Comments</button>  
                 <button class="unsave btn btn-sm btn-primary disabled" data-id={{_id}}>unsave</button>      
             </div>
         </div>
@@ -46,6 +46,8 @@
         </button>
       </div>
       <div class="modal-body">
+        <ul class="list-group comment-container">
+        </ul>
         <form>           
             <div class="form-group">
                 <textarea class="form-control commentText" placeholder="Leave comment"></textarea>
@@ -53,7 +55,7 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+        <button type="button" class="btn btn-primary saveComment" data-dismiss="modal">Save</button>
       </div>
     </div>
   </div>

@@ -15,7 +15,6 @@ module.exports = function (app) {
 app.get("/saved", function(req, res) {
     db.News.find({saved: true}, function(err, savedNews){
       if(err) throw err
-      console.log("this is savedNews:   "+savedNews)
       res.render("saved", {savedNews});
     }) 
 });
@@ -47,4 +46,31 @@ app.get("/unsave/:id", (req, res)=>{
   ).catch(err=>res.json(err))
 })
 
+// {articleId,commentContent}
+app.post("/saveComments/:id", function(req, res){
+
+  db.Note.create(req.body).then(dbNote=>{
+    console.log("article id in save comments route" + req.params.id )
+    return db.News.findOneAndUpdate({ _id: req.params.id }, {$push: {notes: dbNote._id}}, {new:true});
+  
+  }).then(dbArticle=>{
+    console.log("res.json(dbArticle) in save comments route2" + req.params.id )
+    res.json(dbArticle)
+  }).catch(err=>res.json(err))
+})
+
+app.get("/getComments/:id", function(req, res){
+  db.News.findOne({ _id: req.params.id })
+  .populate("notes")
+  .then(function(dbNews){
+    console.log("dbnew    " + dbNews)
+    res.json(dbNews)
+  })
+  .catch(err=>res.json(err))
+
+})
+
+// app.get("/deleteComments/:id",(req, res)=>{
+
+// })
 }
