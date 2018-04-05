@@ -56,7 +56,7 @@ $(document).ready(function () {
                 console.log(comments);
                 comments.forEach(function(comment){
                     const commentContent = $("<li class='list-group-item'>").text(comment.content);
-                    const deleteBtn = $(`<button class="btn btn-primary disabled comment-delete" data-noteid=${comment._id}>`).text("X")
+                    const deleteBtn = $(`<button class="btn btn-primary disabled btn-sm comment-delete" data-noteid=${comment._id}>`).text("X")
                     commentContent.append(deleteBtn)
                     $(".comment-container").append(commentContent)
                 })
