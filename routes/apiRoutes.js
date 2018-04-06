@@ -3,81 +3,134 @@ const cheerio = require("cheerio");
 const db = require("../models");
 
 module.exports = function (app) {
+    app.get("/scrape", (req, res) => {
 
-  app.get("/", function(req, res) {
-    db.News.find({saved: false}, function(err, unsavedNews){
-      if(err) throw err
-      res.render("index", {unsavedNews});
+        request("https://www.pcgamer.com/news/", function (error, response, html) {
+            const $ = cheerio.load(html);
+            let results = [];
+            $(".listingResult").each(function (i, element) {
+                if (i > 0) {
+                    const title = $(element).find(".article-name").text().trim();
+                    const author = $(element).find(".byline span").last().text().trim();
+                    const time = $(element).find(".published-date").attr("datetime");
+                    const summary = $(element).find(".synopsis").clone().children().remove().end().text().trim();
+                    const link = $(element).children("a").attr("href");
+                    const photoURL = $(element).find("img").data("src");
+                    results.push({title,author,time,summary,link,photoURL})       
+                }
+            });
+            db.News.find({}, "-_id title", function (err, existingNews) {
+                if (err) throw err;
+                const existingTitles = new Set(existingNews.map(a => a.title));
+                const newResults = results.filter(b => {
+                    return !existingTitles.has(b.title)
+                });
+                const numOfnewItems = newResults.length;
+                db.News.create(newResults, function (err, data) {
+                    if (err) throw err;
+                    res.json({
+                        numOfnewItems
+                    })
+                })
+            })
+        });
+    });
+
+    app.get("/save/:id", (req, res) => {
+        db.News.findOneAndUpdate({
+            _id: req.params.id
+        }, {
+            $set: {
+                saved: true
+            }
+        }, {
+            new: true
+        }).then(
+            function (docs) {
+                console.log(docs)
+                if (docs) {
+                    res.json("article saved")
+                } else {
+                    res.json("article doesn't exist")
+                }
+            }
+        ).catch(err => res.json(err))
     })
-   
-  });
 
-app.get("/saved", function(req, res) {
-    db.News.find({saved: true}, function(err, savedNews){
-      if(err) throw err
-      res.render("saved", {savedNews});
-    }) 
-});
+    app.get("/unsave/:id", (req, res) => {
+        console.log("lokk" + req.params.id)
+        db.News.findOneAndUpdate({
+            _id: req.params.id
+        }, {
+            $set: {
+                saved: false
+            }
+        }, {
+            new: true
+        }).then(
+            function (docs) {
+                console.log("docs     " + docs)
+                if (docs) {
+                    res.json("article unsaved")
+                } else {
+                    res.json("article doesn't exist")
+                }
+            }
+        ).catch(err => res.json(err))
+    })
 
-app.get("/save/:id", (req, res)=>{
-    db.News.findOneAndUpdate({_id: req.params.id}, {$set: {saved: true}},{new:true}).then(
-      function(docs){
-        console.log(docs)
-        if(docs){
-          res.json("article saved")
-        }else{
-          res.json("article doesn't exist")
-        }
-      }
-    ).catch(err=>res.json(err))
-})
+    // {articleId,commentContent}
+    app.post("/saveComments/:id", function (req, res) {
 
-app.get("/unsave/:id", (req, res)=>{
-  console.log("lokk"+ req.params.id)
-  db.News.findOneAndUpdate({_id: req.params.id}, {$set: {saved: false}},{new:true}).then(
-    function(docs){
-      console.log("docs     " + docs)
-      if(docs){
-        res.json("article unsaved")
-      }else{
-        res.json("article doesn't exist")
-      }
-    }
-  ).catch(err=>res.json(err))
-})
+        db.Note.create(req.body).then(dbNote => {
+            console.log("article id in save comments route" + req.params.id)
+            return db.News.findOneAndUpdate({
+                _id: req.params.id
+            }, {
+                $push: {
+                    notes: dbNote._id
+                }
+            }, {
+                new: true
+            });
 
-// {articleId,commentContent}
-app.post("/saveComments/:id", function(req, res){
+        }).then(dbArticle => {
+            console.log("res.json(dbArticle) in save comments route2" + req.params.id)
+            res.json(dbArticle)
+        }).catch(err => res.json(err))
+    })
 
-  db.Note.create(req.body).then(dbNote=>{
-    console.log("article id in save comments route" + req.params.id )
-    return db.News.findOneAndUpdate({ _id: req.params.id }, {$push: {notes: dbNote._id}}, {new:true});
-  
-  }).then(dbArticle=>{
-    console.log("res.json(dbArticle) in save comments route2" + req.params.id )
-    res.json(dbArticle)
-  }).catch(err=>res.json(err))
-})
+    app.get("/getComments/:id", function (req, res) {
+        db.News.findOne({
+                _id: req.params.id
+            })
+            .populate("notes")
+            .then(function (dbNews) {
+                console.log("dbnew    " + dbNews)
+                res.json(dbNews)
+            })
+            .catch(err => res.json(err))
 
-app.get("/getComments/:id", function(req, res){
-  db.News.findOne({ _id: req.params.id })
-  .populate("notes")
-  .then(function(dbNews){
-    console.log("dbnew    " + dbNews)
-    res.json(dbNews)
-  })
-  .catch(err=>res.json(err))
+    })
 
-})
+    app.delete("/deleteComments/:id", (req, res) => {
 
-app.delete("/deleteComments/:id",(req, res)=>{
+        db.Note.findOneAndRemove({
+            _id: req.params.id
+        }).then(dbNote => {
+            return db.News.findOneAndUpdate({
+                notes: req.params.id
+            }, {
+                $pull: {
+                    notes: dbNote._id
+                }
+            }, {
+                new: true
+            });
+        }).then(dbAriticle => {
+            res.json(dbArticle)
+        }).catch(err => res.json(err))
 
-  db.Note.findOneAndRemove({_id: req.params.id}).then(dbNote=>{
-    return db.News.findOneAndUpdate({ notes: req.params.id }, {$pull: {notes: dbNote._id}}, {new:true});
-  }).then(dbAriticle=>{
-    res.json(dbArticle)
-  }).catch(err=>res.json(err))
-    
-})
+    })
 
 }
