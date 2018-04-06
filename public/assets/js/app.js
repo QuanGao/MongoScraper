@@ -2,14 +2,14 @@ $(document).ready(function () {
 
     $(".save").on("click", function(){
         const id = $(this).data("id")
-        $.get(`/news/save/${id}`, (data, status)=>{
+        $.put(`/news/save/${id}`, (data, status)=>{
             location.reload();
         })
     });
 
     $(".unsave").on("click", function(){
         const id = $(this).data("id")
-        $.get(`/news/unsave/${id}`, (data, status)=>{
+        $.put(`/news/unsave/${id}`, (data, status)=>{
             location.reload();           
         })
     });

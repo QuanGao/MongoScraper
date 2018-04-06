@@ -35,7 +35,7 @@ module.exports = function (app) {
         });
     });
 
-    app.get("/news/save/:id", (req, res) => {
+    app.put("/news/save/:id", (req, res) => {
         db.News.findOneAndUpdate({
             _id: req.params.id
         }, {
@@ -55,7 +55,7 @@ module.exports = function (app) {
         ).catch(err => res.json(err))
     })
 
-    app.get("/news/unsave/:id", (req, res) => {
+    app.put("/news/unsave/:id", (req, res) => {
         db.News.findOneAndUpdate({
             _id: req.params.id
         }, {
