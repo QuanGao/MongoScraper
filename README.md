@@ -6,8 +6,8 @@
 
 ### Get the latest news by taping that scrape button & Save the news that interest you
 
-![scrape](./gifs/search.gif)
+![scrape](./pics/scrape.png)
 
 ### Post/view comment if you so inclined. It's completely anonymous so feel free to speak your mind!
 
-![comment](./gifs/update.gif)
+![comment](./pics/comment.png)
