@@ -4,11 +4,10 @@ const db = require("../models");
 
 module.exports = function (app) {
     app.get("/scrape", (req, res) => {
-
         request("https://www.pcgamer.com/news/", function (error, response, html) {
             const $ = cheerio.load(html);
             let results = [];
-            $(".listingResult").each(function (i, element) {
+            $(".listingResult").each((i, element) => {
                 if (i > 0) {
                     const title = $(element).find(".article-name").text().trim();
                     const author = $(element).find(".byline span").last().text().trim();
@@ -19,7 +18,7 @@ module.exports = function (app) {
                     results.push({title,author,time,summary,link,photoURL})       
                 }
             });
-            db.News.find({}, "-_id title", function (err, existingNews) {
+            db.News.find({}, "-_id title", (err, existingNews) => {
                 if (err) throw err;
                 const existingTitles = new Set(existingNews.map(a => a.title));
                 const newResults = results.filter(b => {
@@ -36,7 +35,7 @@ module.exports = function (app) {
         });
     });
 
-    app.get("/save/:id", (req, res) => {
+    app.get("/news/save/:id", (req, res) => {
         db.News.findOneAndUpdate({
             _id: req.params.id
         }, {
@@ -46,8 +45,7 @@ module.exports = function (app) {
         }, {
             new: true
         }).then(
-            function (docs) {
-                console.log(docs)
+            (docs) => {
                 if (docs) {
                     res.json("article saved")
                 } else {
@@ -57,8 +55,7 @@ module.exports = function (app) {
         ).catch(err => res.json(err))
     })
 
-    app.get("/unsave/:id", (req, res) => {
-        console.log("lokk" + req.params.id)
+    app.get("/news/unsave/:id", (req, res) => {
         db.News.findOneAndUpdate({
             _id: req.params.id
         }, {
@@ -68,7 +65,7 @@ module.exports = function (app) {
         }, {
             new: true
         }).then(
-            function (docs) {
+            (docs) => {
                 console.log("docs     " + docs)
                 if (docs) {
                     res.json("article unsaved")
@@ -79,11 +76,8 @@ module.exports = function (app) {
         ).catch(err => res.json(err))
     })
 
-    // {articleId,commentContent}
-    app.post("/saveComments/:id", function (req, res) {
-
+    app.post("/comments/save/:id", (req, res) => {
         db.Note.create(req.body).then(dbNote => {
-            console.log("article id in save comments route" + req.params.id)
             return db.News.findOneAndUpdate({
                 _id: req.params.id
             }, {
@@ -95,26 +89,23 @@ module.exports = function (app) {
             });
 
         }).then(dbArticle => {
-            console.log("res.json(dbArticle) in save comments route2" + req.params.id)
             res.json(dbArticle)
         }).catch(err => res.json(err))
     })
 
-    app.get("/getComments/:id", function (req, res) {
+    app.get("/comments/read/:id", (req, res) => {
         db.News.findOne({
                 _id: req.params.id
             })
             .populate("notes")
             .then(function (dbNews) {
-                console.log("dbnew    " + dbNews)
                 res.json(dbNews)
             })
             .catch(err => res.json(err))
 
     })
 
-    app.delete("/deleteComments/:id", (req, res) => {
-
+    app.delete("/comments/delete/:id", (req, res) => {
         db.Note.findOneAndRemove({
             _id: req.params.id
         }).then(dbNote => {

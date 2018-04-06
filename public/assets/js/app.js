@@ -2,14 +2,14 @@ $(document).ready(function () {
 
     $(".save").on("click", function(){
         const id = $(this).data("id")
-        $.get(`/save/${id}`, (data, status)=>{
+        $.get(`/news/save/${id}`, (data, status)=>{
             location.reload();
         })
     });
 
     $(".unsave").on("click", function(){
         const id = $(this).data("id")
-        $.get(`/unsave/${id}`, (data, status)=>{
+        $.get(`/news/unsave/${id}`, (data, status)=>{
             location.reload();           
         })
     });
@@ -32,9 +32,8 @@ $(document).ready(function () {
             const commentButton = $(event.relatedTarget) 
             const id = commentButton.data("id")
             $(this).find(".modal-title").text(`Comments for article: ${id}`);
-            $(this).find(".saveComment").data("id",id);
-
-            $.get(`/getComments/${id}`, (data, status)=>{
+            $(this).find(".comment-save").data("id",id);
+            $.get(`/comments/read/${id}`, (data, status)=>{
                 $(".comment-container").empty();
                 const comments = data.notes;
                 comments.forEach((comment)=>{
@@ -48,17 +47,13 @@ $(document).ready(function () {
         })        
     })
 
-    $(".saveComment").on("click", function(event){
+    $(".comment-save").on("click", function(event){
         event.preventDefault()
         const content = $(".commentText").val().trim();
         const id = $(this).data("id")
         if(content){
-            $.post(`/saveComments/${id}`,{content}, function(data, status){
-                console.log("data after save comemnt  " + data);
-                console.log("data.notes after save comemnt  " + data.notes);
-                console.log("data.title after save comemnt  " + data.title);
+            $.post(`/comments/save/${id}`,{content}, function(data, status){
                 $(".commentText").val("");
-
             })
         }
     })  
@@ -66,14 +61,11 @@ $(document).ready(function () {
     $(".comment-container").on("click", ".comment-delete",function(event){
         const id = $(this).data("noteid")
         $.ajax({
-            url: `/deleteComments/${id}`,
+            url: `/comments/delete/${id}`,
             type: 'DELETE',
             success: function(result) {
                 location.reload();
             }
         });
-
-
     })
-
 })
