@@ -2,16 +2,24 @@ $(document).ready(function () {
 
     $(".save").on("click", function(){
         const id = $(this).data("id")
-        $.put(`/news/save/${id}`, (data, status)=>{
-            location.reload();
-        })
+        $.ajax({
+            url: `/news/save/${id}`,
+            type: 'PUT',
+            success: function(result) {
+                location.reload();
+            }
+        });      
     });
 
     $(".unsave").on("click", function(){
         const id = $(this).data("id")
-        $.put(`/news/unsave/${id}`, (data, status)=>{
-            location.reload();           
-        })
+        $.ajax({
+            url: `/news/unsave/${id}`,
+            type: 'PUT',
+            success: function(result) {
+                location.reload();
+            }
+        });
     });
 
     $(".scrape").on("click", function(){
