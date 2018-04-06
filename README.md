@@ -6,8 +6,8 @@
 
 ### Get the latest news by taping that scrape button & Save the news that interest you
 
-![scrape](./pics/scrape.png)
+<img src="./pics/scrape.png" alt="scrapePic" width="800"/>
 
 ### Post/view comment if you so inclined. It's completely anonymous so feel free to speak your mind!
 
-![comment](./pics/comment.png)
+<img src="./pics/comment.png" alt="commentPic" width="800"/>
