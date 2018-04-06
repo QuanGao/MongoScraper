@@ -7,7 +7,7 @@ module.exports = function (app) {
     app.get("/", (req, res)=>{
         db.News.find({
             saved: false
-        }, (err, unsavedNews)=>{
+        }).sort({"time":-1}).exec((err, unsavedNews)=>{
             if (err) throw err
             res.render("index", {
                 unsavedNews
@@ -18,7 +18,7 @@ module.exports = function (app) {
     app.get("/saved", (req, res)=>{
         db.News.find({
             saved: true
-        }, (err, savedNews)=>{
+        }).sort({"time":-1}).exec((err, savedNews)=>{
             if (err) throw err
             res.render("saved", {
                 savedNews
